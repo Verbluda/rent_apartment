@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  apartment_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=apartment_db
+      - POSTGRES_USER=lucy
+      - POSTGRES_PASSWORD=3546
+    volumes:
+      - db:/var/lib/postgresql/data postgres
+    ports:
+      - "5436:5432"
+
+volumes:
+  db:
