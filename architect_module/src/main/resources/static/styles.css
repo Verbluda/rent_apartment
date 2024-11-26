@@ -1,0 +1,200 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f0f0f0; /* Светлый фон */
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+}
+
+header {
+    padding: 20px 20px; /* Уменьшение отступов */
+    text-align: center;
+    background: #111; /* Темный фон */
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 100;
+    margin-top: 0;
+}
+
+header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    margin-bottom: 10px;
+    margin-top: 0;
+}
+.card-container {
+    width: 100%; /* Ширина 100%, но карточка будет центрирована */
+    display: flex;
+    justify-content: center; /* Центрируем контейнер по горизонтали */
+}
+header p {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    margin-top: 0;
+}
+
+.card {
+    margin: 20px 0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+footer {
+    background-color: #111;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+    position: relative;
+    z-index: 100;
+}
+
+.table th {
+    background-color: #c72c41;
+    color: #fff;
+}
+
+.table td {
+    background-color: #f9f9f9;
+}
+
+.btn-primary {
+    background-color: #c72c41;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #a02030;
+}
+
+.btn-primary:active {
+    transform: none; /* Убираем эффект уменьшения при нажатии */
+}
+
+.modal-header, .modal-body {
+    background-color: #ffffff;
+    color: #333;
+}
+
+.modal-footer {
+    background-color: #f8f3ef;
+}
+
+.rounded-button {
+    border-radius: 30px;
+    padding: 10px 20px;
+}
+
+.section-title {
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.chart-container {
+    margin: 40px 0;
+}
+
+/* Общий контейнер для меню и навигационного бара */
+.header-nav-container {
+    position: relative;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/* Навигационное меню */
+.nav {
+    background-color: #111; /* Темный фон для меню */
+    color: #fff; /* Белый цвет текста */
+    padding: 5px 0; /* Уменьшение отступов */
+    display: flex;
+    justify-content: center; /* Центрирование ссылок */
+    gap: 30px; /* Расстояние между ссылками */
+    z-index: 1000; /* Поверх других элементов */
+    border-bottom: none;
+}
+
+/* Ссылки в навигации */
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: #c72c41; /* Цвет при наведении */
+}
+
+/* Верхний навигационный бар */
+.auth-bar {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    z-index: 1100; /* Слой выше меню */
+    border: none;
+}
+
+/* Контейнер для кнопок входа и регистрации */
+.auth-buttons {
+    display: flex;
+    flex-direction: column; /* Кнопки по вертикали */
+    gap: 10px;
+}
+
+/* Кнопки входа и регистрации */
+.btn-primary {
+    background-color: #c72c41; /* Красный цвет фона */
+    border: none;
+    padding: 8px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.btn-primary:hover {
+    background-color: #a02030; /* Темно-красный при наведении */
+}
+
+.btn-primary:active {
+    transform: none; /* Убираем эффект уменьшения при нажатии */
+}
+
+/* Стили для имени пользователя */
+.username {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* Стили для кнопки выхода */
+.btn-danger {
+    background-color: #c72c41; /* Красный для кнопки выхода */
+    border: none;
+    padding: 5px 15px;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+.btn-danger:hover {
+    background-color: #a02030; /* Темный красный при наведении */
+}
+.btn-custom {
+    background-color: #c72c41;
+    color: white;
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+.btn-custom:hover {
+    background-color: #a02030;
+}
