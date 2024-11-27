@@ -2,12 +2,14 @@ package com.example.product_module.controller;
 
 import com.example.product_module.model.TestObjectDto;
 import com.example.product_module.repository.TokenRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/product")
 @RequiredArgsConstructor
+@Tag(name = "Product_module", description = "Обработка акций")
 public class ProductController {
 
     private final TokenRepository tokenRepository;
