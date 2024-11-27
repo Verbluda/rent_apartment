@@ -3,13 +3,13 @@ package com.example.architect_module.controller;
 import com.example.architect_module.model.ArchitectRequestDto;
 import com.example.architect_module.service.ArchitectService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Controller
 @RequiredArgsConstructor
@@ -27,8 +27,8 @@ public class ArchitectController {
 
     @PostMapping("/automation")
     @Operation(summary = "метод генерации нового скрипта для миграции БД")
-    public String createDBMigration(@RequestBody ArchitectRequestDto architectRequestDto) {
-        architectService.createMigrationFile(architectRequestDto);
-        return "redirect: index";
+    public String createDBMigration(@RequestBody ArchitectRequestDto architectRequestDto, Model model) {
+        architectService.createMigrationFile(architectRequestDto, model);
+        return "result";
     }
 }

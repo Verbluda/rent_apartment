@@ -28,16 +28,16 @@ public class ArchitectServiceImpl implements ArchitectService {
 
     public static final String FILENAME_TEMPLATE = "V%d__%s_%s.sql";
     public static final String PATH_OF_MIGRATION_FILE = "C:\\Users\\Lucy\\IdeaProjects\\rent_apartment\\architect_module\\src\\main\\resources\\db\\migration\\%s";
-    public static final String CREATE_SCRIPT_START = "CREATE TABLE IF NOT EXISTS %s (\n    id int8 PRIMARY KEY";
+    public static final String CREATE_SCRIPT_START = "CREATE TABLE IF NOT EXISTS %s (\n    ";
     public static final String COLUMNS = ",\n    %s %s";
-    public static final String CREATE_SCRIPT_END = ");\n\nCREATE SEQUENCE %s_sequence START 1 INCREMENT 1;";
+    public static final String CREATE_SCRIPT_END = ");\n\nCREATE SEQUENCE %s_sequence;";
     public static final String UPDATE_SCRIPT_START = "ALTER TABLE IF EXISTS {";
     public static final String UPDATE_SCRIPT_UPDATE_TYPE = "\nALTER %s %s";
     public static final String UPDATE_SCRIPT_END = "\n};";
     public static final String DELETE_SCRIPT = "DROP TABLE IF EXIST %s;\n DROP SEQUENCE IF EXIST %s_sequence";
 
     @Override
-    public void createMigrationFile(ArchitectRequestDto architectRequestDto) {
+    public void createMigrationFile(ArchitectRequestDto architectRequestDto, Model model) {
         String operation = architectRequestDto.getOperation();
         String name = architectRequestDto.getTableName();
         Map<String, String> newColumns = architectRequestDto.getValues();
@@ -70,14 +70,28 @@ public class ArchitectServiceImpl implements ArchitectService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        model.addAttribute("result", "Скрипт успешно создан");
     }
 
     @Override
     public void getMainPage(Model model) {
         String query = "SELECT description FROM flyway_schema_history";
-        List<String> rowlistTableName = jdbcTemplate.query(query, new SingleColumnRowMapper<>(String.class));
-        List<String> listTableName = rowlistTableName.stream().map(s -> s.substring(s.indexOf(" ") + 1)).collect(Collectors.toList());
+        List<String> rowListTableName = jdbcTemplate.query(query, new SingleColumnRowMapper<>(String.class));
+        List<String> listTableName = rowListTableName.stream().map(s -> s.substring(s.indexOf(" ") + 1)).collect(Collectors.toList());
         model.addAttribute("listTableName", listTableName);
+    }
+
+    @Override
+    public Map<String, String> getColumnsData(String tableName) {
+        Map<String, String> columnsData = new HashMap<>();
+        String query = "SELECT COLUMN_NAME, UDT_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s'";
+        List<Map<String, Object>> columnList = jdbcTemplate.queryForList(String.format(query, tableName));
+        for (Map<String, Object> column : columnList) {
+            String columnName = column.get("column_name").toString();
+            String columnType = column.get("udt_name").toString();
+            columnsData.put(columnName, columnType);
+        }
+        return columnsData;
     }
 
     private int calculateVersionOfScript() {
@@ -102,12 +116,12 @@ public class ArchitectServiceImpl implements ArchitectService {
         Map<String, String> columnsToUpdateType = new HashMap<>();
 
         String query = "SELECT COLUMN_NAME, UDT_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '%s'";
-        List<Map<String, Object>> oldColumns = jdbcTemplate.queryForList(String.format(query, "address"));
+        List<Map<String, Object>> oldColumns = jdbcTemplate.queryForList(String.format(query, tableName));
 
         for (Map<String, Object> oldColumn : oldColumns) {
             String oldColumnName = oldColumn.get("column_name").toString();
-
             String oldColumnType = oldColumn.get("udt_name").toString();
+
             String newColumnType = newColumns.get(oldColumnName);
             if (!newColumnType.equals(oldColumnType)) {
                 columnsToUpdateType.put(oldColumnName, newColumnType);
