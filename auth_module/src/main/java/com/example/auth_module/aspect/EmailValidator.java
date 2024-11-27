@@ -1,6 +1,5 @@
 package com.example.auth_module.aspect;
 
-
 import com.example.auth_module.model.dto.UserRegistrationRequestDto;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
