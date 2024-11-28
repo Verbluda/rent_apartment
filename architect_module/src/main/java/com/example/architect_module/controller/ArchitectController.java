@@ -29,6 +29,6 @@ public class ArchitectController {
     @Operation(summary = "метод генерации нового скрипта для миграции БД")
     public String createDBMigration(@RequestBody ArchitectRequestDto architectRequestDto, Model model) {
         architectService.createMigrationFile(architectRequestDto, model);
-        return "result";
+        return "redirect: index";
     }
 }

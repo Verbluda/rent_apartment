@@ -3,15 +3,12 @@ package com.example.architect_module.service.impl;
 import com.example.architect_module.model.ArchitectRequestDto;
 import com.example.architect_module.service.ArchitectService;
 import lombok.RequiredArgsConstructor;
-import org.flywaydb.core.Flyway;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,18 +20,18 @@ import static java.util.Objects.isNull;
 @RequiredArgsConstructor
 public class ArchitectServiceImpl implements ArchitectService {
 
-    private final Flyway flyway;
+    private final FlywayMigrationService flywayMigrationService;
     private final JdbcTemplate jdbcTemplate;
 
     public static final String FILENAME_TEMPLATE = "V%d__%s_%s.sql";
     public static final String PATH_OF_MIGRATION_FILE = "C:\\Users\\Lucy\\IdeaProjects\\rent_apartment\\architect_module\\src\\main\\resources\\db\\migration\\%s";
     public static final String CREATE_SCRIPT_START = "CREATE TABLE IF NOT EXISTS %s (\n    ";
-    public static final String COLUMNS = ",\n    %s %s";
+    public static final String COLUMNS = "    %s %s,\n";
     public static final String CREATE_SCRIPT_END = ");\n\nCREATE SEQUENCE %s_sequence;";
-    public static final String UPDATE_SCRIPT_START = "ALTER TABLE IF EXISTS {";
-    public static final String UPDATE_SCRIPT_UPDATE_TYPE = "\nALTER %s %s";
-    public static final String UPDATE_SCRIPT_END = "\n};";
-    public static final String DELETE_SCRIPT = "DROP TABLE IF EXIST %s;\n DROP SEQUENCE IF EXIST %s_sequence";
+    public static final String UPDATE_SCRIPT_START = "ALTER TABLE IF EXISTS %s";
+    public static final String UPDATE_SCRIPT_UPDATE_TYPE = "\nALTER COLUMN %s TYPE %s,";
+    public static final String UPDATE_SCRIPT_END = ";";
+    public static final String DELETE_SCRIPT = "DROP TABLE IF EXISTS %s;\n DROP SEQUENCE IF EXISTS %s_sequence;";
 
     @Override
     public void createMigrationFile(ArchitectRequestDto architectRequestDto, Model model) {
@@ -47,7 +44,6 @@ public class ArchitectServiceImpl implements ArchitectService {
         String filename = String.format(FILENAME_TEMPLATE, version, operation, name);
         String filePath = String.format(PATH_OF_MIGRATION_FILE, filename);
 
-        Path path = Paths.get(filePath);
         try {
             StringBuilder script = new StringBuilder();
             switch (operation) {
@@ -64,20 +60,24 @@ public class ArchitectServiceImpl implements ArchitectService {
                     throw new RuntimeException("неизвестная операция с базой данных");
             }
 
-            byte[] bs = script.toString().getBytes();
-            Files.write(path, bs);
-            flyway.migrate();
+            try (FileWriter fileWriter = new FileWriter(filePath)) {
+                fileWriter.write(script.toString());
+                fileWriter.flush();
+                flywayMigrationService.migrate();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        model.addAttribute("result", "Скрипт успешно создан");
     }
 
     @Override
     public void getMainPage(Model model) {
         String query = "SELECT description FROM flyway_schema_history";
         List<String> rowListTableName = jdbcTemplate.query(query, new SingleColumnRowMapper<>(String.class));
-        List<String> listTableName = rowListTableName.stream().map(s -> s.substring(s.indexOf(" ") + 1)).collect(Collectors.toList());
+        List<String> listTableName = rowListTableName.stream()
+                .map(s -> s.substring(s.indexOf(" ") + 1))
+                .map(s -> s.replace(" ","_"))
+                .collect(Collectors.toList());
         model.addAttribute("listTableName", listTableName);
     }
 
@@ -95,7 +95,7 @@ public class ArchitectServiceImpl implements ArchitectService {
     }
 
     private int calculateVersionOfScript() {
-        String query = "SELECT MAX(version) FROM flyway_schema_history";
+        String query = "SELECT COUNT(version) FROM flyway_schema_history";
         if (isNull(jdbcTemplate.queryForObject(query, Integer.class))) {
             return 1;
         }
@@ -107,6 +107,7 @@ public class ArchitectServiceImpl implements ArchitectService {
         for (Map.Entry<String, String> column : newColumns.entrySet()) {
             script.append(String.format(COLUMNS, column.getKey(), column.getValue()));
         }
+        script.delete(script.length() - 2, script.length() - 1);
         script.append(String.format(CREATE_SCRIPT_END, tableName));
     }
 
@@ -132,8 +133,8 @@ public class ArchitectServiceImpl implements ArchitectService {
         if (!columnsToUpdateType.isEmpty()) {
             for (Map.Entry<String, String> columnToUpdateType : columnsToUpdateType.entrySet()) {
                 script.append(String.format(UPDATE_SCRIPT_UPDATE_TYPE, columnToUpdateType.getKey(), columnToUpdateType.getValue()));
-                script.append(" | ");
             }
+            script.deleteCharAt(script.length() - 1);
         }
         script.append(UPDATE_SCRIPT_END);
     }

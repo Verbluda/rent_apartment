@@ -14,7 +14,7 @@ VALUES
     (1, 'Москва', 'Садовая', '6', '56', 2);
 
 -- Функция логирования
-CREATE OR REPLACE FUNCTION log_registration_apartment_process()
+CREATE OR REPLACE FUNCTION log_apartment_registration_process()
 RETURNS TRIGGER as $$
     BEGIN
     INSERT INTO logs_apartment_registration_info (operation_type, logs_message)
@@ -26,4 +26,4 @@ RETURNS TRIGGER as $$
 -- Триггер для таблицы Адрес
 CREATE TRIGGER log_address_trigger
     AFTER INSERT ON address
-    FOR EACH ROW EXECUTE FUNCTION log_registration_apartment_process();
+    FOR EACH ROW EXECUTE FUNCTION log_apartment_registration_process();
