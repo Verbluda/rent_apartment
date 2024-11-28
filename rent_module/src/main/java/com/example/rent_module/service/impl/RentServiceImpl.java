@@ -97,14 +97,14 @@ public class RentServiceImpl implements RentService {
 
     @Override
     public ApartmentResponseDto bookApartment(UserEntity user, Long id, LocalDate startDate, LocalDate endDate) {
-//        //bookingRepository. проверка (1 приоритет)
-//        ApartmentEntity apartment = apartmentRepository.findById(id).orElseThrow(() -> new ApartmentException("Апартаменты недоступны для бронирования"));
-//        BookingInfoEntity bookingInfo = rentMapper.prepareBookingInfoEntityFromParams(startDate, endDate, apartment, user);
-//        bookingRepository.save(bookingInfo);
-//        //bookingRepository
-//        //productСontroller
+        //bookingRepository. проверка (1 приоритет)
+        ApartmentEntity apartment = apartmentRepository.findById(id).orElseThrow(() -> new ApartmentException("Апартаменты недоступны для бронирования"));
+        BookingInfoEntity bookingInfo = rentMapper.prepareBookingInfoEntityFromParams(startDate, endDate, apartment, user);
+        bookingRepository.save(bookingInfo);
+        //bookingRepository
+        //productСontroller
 //        rentMapper.apartmentEntityToApartmentResponseDto(apartment);
-//        // в течение суток вышлем инфу
+        // в течение суток вышлем инфу
         return null;
     }
 
